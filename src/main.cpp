@@ -29,15 +29,18 @@ int main(int argc, char** argv)
 
   int hidden = 0;
 
-  auto setter = [&](int& int_ref) { int_ref = ++hidden; }; 
+  using node_type = bstree<int, int>::node_type;
 
-  balanced_tree.set_special(setter);
+  auto setter = [&](node_type& node) { node.__pos = ++hidden; }; // TODO: Change to '
 
-  auto sp_printer = [&](const pair<const int, int>& pr, const int& int_ref) {
-      const auto&[key, value] = pr;
-      cout << '(' << int_ref << ") [" << key << "], " << flush; }; 
+  balanced_tree.preOrderTraverse(setter);
 
-  balanced_tree.visit_special(sp_printer); //TODO:  Want level order print that prints __d. In general, we want to print __d at will.
+  auto sp_printer = [](const node_type& node) {
+      const auto&[key, value] = node.__vt.__get_value();
+
+      cout << '[' << node.__pos << ":  " << key << "], " << flush; }; 
+
+  balanced_tree.preOrderTraverse(sp_printer); //TODO:  Want level order print that prints __d. In general, we want access to 'Node&' 
 
   bstree<int, int> tree_copy = balanced_tree;
 

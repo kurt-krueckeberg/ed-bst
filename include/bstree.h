@@ -103,7 +103,7 @@ template<class Key, class Value> class bstree {
 
         __value_type<Key, Value> __vt;  // Convenience wrapper for std::pair<const Key, Value>
 
-        int __order;           // This is for education purposes only
+        int __pos;           // This is for education purposes only
                               
         std::unique_ptr<Node> left;
         std::unique_ptr<Node> right;
@@ -278,24 +278,6 @@ From std::map insert_or_assign methods
     bstree(bstree&& lhs) noexcept
     {
         move(std::move(lhs)); 
-    }
-
-    // set_special() is for eductaional purposes
-    // Functor must have 'void operator::()(int& )'  
-    template<typename Functor> void set_special(Functor f, std::unique_ptr<Node>& root) noexcept;
-
-    template<typename Functor> void set_special(Functor f) noexcept
-    {
-       set_special(f, root);
-    }
-
-    // visit_special() is for eductaional purposes
-    // Functor must have 'void operator::()(const pair<const Key, Value>&, int&)'  
-    template<typename Functor> void visit_special(Functor f, std::unique_ptr<Node>& root) noexcept;
-
-    template<typename Functor> void visit_special(Functor f) noexcept
-    {
-       visit_special(f, root);
     }
 
     bstree& operator=(const bstree&) noexcept; 
@@ -614,39 +596,10 @@ template<class Key, class Value> template<typename Functor> void bstree<Key, Val
 
    DoInOrderTraverse(f, current->left);
 
-   f(current->__vt.__get_value()); 
+   f(*current); 
 
    DoInOrderTraverse(f, current->right);
 }
-
-template<class Key, class Value> template<typename Functor> void bstree<Key, Value>::set_special(Functor f, std::unique_ptr<Node>& current) noexcept
-{
-   if (!current) {
-
-      return;
-   }
-
-   f(current->__order); 
-
-   set_special(f, current->left);
-
-   set_special(f, current->right);
-}
-
-template<class Key, class Value> template<typename Functor> void bstree<Key, Value>::visit_special(Functor f, std::unique_ptr<Node>& current) noexcept
-{
-   if (!current) {
-
-      return;
-   }
-
-   visit_special(f, current->left);
-
-   f(current->__vt.__get_value(), current->__order); 
-
-   visit_special(f, current->right);
-}
-
 
 template<class Key, class Value> template<typename Functor> void bstree<Key, Value>::DoPreOrderTraverse(Functor f, const std::unique_ptr<Node>& current) const noexcept
 {
@@ -655,7 +608,7 @@ template<class Key, class Value> template<typename Functor> void bstree<Key, Val
       return;
    }
 
-   f(current->__vt.__get_value()); 
+   f(*current); 
 
    DoPreOrderTraverse(f, current->left);
 
@@ -673,7 +626,7 @@ template<class Key, class Value> template<typename Functor> void bstree<Key, Val
 
    DoPostOrderTraverse(f, current->right);
 
-   f(current->__vt.__get_value()); 
+   f(*current); 
 }
 
 /*
