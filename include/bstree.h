@@ -1045,17 +1045,16 @@ template<class Key, class Value> bool bstree<Key, Value>::isBalanced() const noe
 // Breadth-first traversal. Useful for display the tree (with a functor that knows how to pad with spaces based on level).
 template<class Key, class Value> template<typename Functor> void bstree<Key, Value>::levelOrderTraverse(Functor f) const noexcept
 {
-   std::queue< std::pair<const Node*, int> > queue; 
+   //--std::queue< std::pair<const Node*, int> > queue; 
+   std::queue<Node *, int> > queue; 
 
-   Node* proot = root.get();
-
-   if (proot == nullptr) return;
+   if (!proot) return;
       
    auto initial_level = 1; // initial, top root level is 1.
    
    // 1. pair.first  is: const tree<Key, Value>::Node23*, the current node to visit.
    // 2. pair.second is: current level of tree.
-   queue.push(std::make_pair(proot, initial_level));
+   queue.push(std::make_pair(root.get(), initial_level));
 
    while (!queue.empty()) {
 
@@ -1065,15 +1064,15 @@ template<class Key, class Value> template<typename Functor> void bstree<Key, Val
         int current_level = pair_.second;
        */
 
-        auto[current, current_level] = queue.front(); // C++17 unpacking.
+        auto[pnode, current_level] = queue.front(); // C++17 unpacking.
 
-        f(current, current_level);  
+        f(pnode.get(), current_level);  
         
-        if(current->left)
-            queue.push(std::make_pair(current->left.get(), current_level + 1));  
+        if(pnode->left)
+            queue.push(std::make_pair(pnode->left.get(), current_level + 1));  
 
-        if(current->right)
-            queue.push(std::make_pair(current->right.get(), current_level + 1));  
+        if(pnode->right)
+            queue.push(std::make_pair(pnode->right.get(), current_level + 1));  
 
         queue.pop(); 
    }
