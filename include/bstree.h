@@ -64,7 +64,7 @@ template<class Key, class Value> class bstree {
          */
 
        ~Node() = default;
-       
+
         std::ostream& print(std::ostream& ostr) const noexcept; 
 
         std::ostream& debug_print(std::ostream& ostr) const noexcept;
@@ -101,6 +101,14 @@ template<class Key, class Value> class bstree {
             right->parent = this;
         }  
 
+        void mimic_ctor() noexcept  // mimic the recursive ctor, but set __order instead.
+        {
+            int i = 1;
+            mimic_ctor(i, *root);
+        }
+
+        void mimic_ctor(int& order, const Node&) noexcept; // mimic the recursive ctor, but set __order instead.
+       
         __value_type<Key, Value> __vt;  // Convenience wrapper for std::pair<const Key, Value>
 
         int __pos;           // This is for education purposes only
@@ -1100,4 +1108,25 @@ template<class Key, class Value> template<typename Functor> void bstree<Key, Val
    }
 }
 
+template<class Key, class Value>  void bstree<Key, Value>::Node::mimic_ctor(int& order, const typename bstree<Key, Value>::Node& node) noexcept
+{
+   // TODO: Set __pos
+   node.__pos = order++;
+
+   if (!node->parent) // If lhs is the root, then set parent to nullptr.
+       parent = nullptr;
+
+   // This will recursively invoke the constructor again, resulting in the entire tree rooted at
+   // lhs being copied.
+
+   if (node.left) { 
+
+       mimic_ctor(*node.left); 
+   } 
+   
+   if (node.right) {
+
+       mimic_ctor(*node.right); 
+    }
+}
 #endif
