@@ -3,30 +3,35 @@
 #include <iostream>
 #include <iomanip>
 #include <initializer_list>
+#include <algorithm>
 #include "test.h"
 #include "bstree.h"
 
 using namespace std;
 
-
 int main(int argc, char** argv) 
 {
-  std::initializer_list<int> lst = {100, 50, 200, 20, 70, 150, 250, -10, 40, 60, 90, 125, 175, 225, 275, -40, 10, 30, 45, 55, 65, 80, 95, 110, 130, 165, 190, 220, 230, 260, 290,\
+  // These ordered values produce a complete, i.e., balanced and full, bst.
+  std::initializer_list<int> int_list = {100, 50, 200, 20, 70, 150, 250, -10, 40, 60, 90, 125, 175, 225, 275, -40, 10, 30, 45, 55, 65, 80, 95, 110, 130, 165, 190, 220, 230, 260, 290,\
     -70, -30, -5, 15, 25, 35, 42, 47, 52, 57, 62, 67, 92, 97, 105, 115, 127, 135, 160, 170, 180, 195, 210, 222, 227, 235, 260, 280 };
 
-  bstree<int, int> balanced_tree;
+  std::vector<pair<int, int>> vec_pairs;
 
-  for (const auto& i : lst) 
-      balanced_tree.insert(i, i);
+  bstree<int, int> bal_tree;
+  
+  transform(int_list.begin(), int_list.end(), vec_pairs.begin(), [](const auto& i)-> pair<const int, int> { return {i, i}; });
+
+  for (const auto& pr : vec_pairs) 
+      bal_tree.insert(pr);
    
-  auto key_printer = [](const auto& pr) {
+  auto print_key = [](const auto& pr) {
       const auto&[key, value] = pr;
       cout << key << ", ";
   };
   
-  balanced_tree.printlevelOrder(cout, key_printer);
+  bal_tree.printlevelOrder(cout, print_key);
 
-  cout << "\n--------------\nPrinting tree_copy, a copy of the above balanced_tree.\n"; 
+  cout << "\n--------------\nPrinting tree_copy, a copy of the above bal_tree.\n"; 
 
   int order = 0;
 
@@ -35,7 +40,7 @@ int main(int argc, char** argv)
   // Set the order a node is visited when a pre-order traversal is done
   auto set_order = [&](node_type& node) { node.__pos = ++order; }; 
 
-  balanced_tree.preOrderTraverse(set_order);
+  bal_tree.preOrderTraverse(set_order);
 
 /*
   auto print_order = [](const node_type& node, int level) {
@@ -67,33 +72,30 @@ int main(int argc, char** argv)
       } 
   };
 
-  balanced_tree.levelOrderTraverse(print_functor()); 
+  bal_tree.levelOrderTraverse(print_functor()); 
 
-  bstree<int, int> tree_copy = balanced_tree;
+  bstree<int, int> tree_copy = bal_tree;
 
-  tree_copy.printlevelOrder(cout, key_printer);
+  tree_copy.printlevelOrder(cout, print_key);
   
-  cout << "floor(37) = " << balanced_tree.floor(37) << '\n';
+  cout << "floor(37) = " << bal_tree.floor(37) << '\n';
 
-  cout << "ceiling(37) = " << balanced_tree.ceiling(37) << '\n';
+  cout << "ceiling(37) = " << bal_tree.ceiling(37) << '\n';
  
-  cout << "floor(41) = " << balanced_tree.floor(41) << '\n';
+  cout << "floor(41) = " << bal_tree.floor(41) << '\n';
 
-  cout << "ceilling(41) = " << balanced_tree.ceiling(41) << '\n';
+  cout << "ceilling(41) = " << bal_tree.ceiling(41) << '\n';
 
-  balanced_tree.printlevelOrder(cout, key_printer);
+  bal_tree.printlevelOrder(cout, print_key);
 
-  for (auto& x : lst) {
+  for (auto& x : int_list) {
 
      cout << "--------------------------------\n";
        
-     cout << "balanced_tree.remove(" << x << ")\n";
-     if (x == 15) {
-         auto debug = 10;
-         ++debug;
-     }
-     balanced_tree.remove(x);
-     balanced_tree.printlevelOrder(cout, key_printer);
+     cout << "bal_tree.remove(" << x << ")\n";
+     
+     bal_tree.remove(x);
+     bal_tree.printlevelOrder(cout, print_key);
   } 
 
   return 0;
@@ -119,7 +121,7 @@ int main(int argc, char** argv)
       cout << "Tree after removal of Test{" << key << "}. " << tree; 
       cout << "\nLevel-order print after the removal of Test{" << key << "}\n";
       
-      tree.printlevelOrder(cout, key_printer);
+      tree.printlevelOrder(cout, print_key);
 
       cout << flush << "\nDebug print\n";
 

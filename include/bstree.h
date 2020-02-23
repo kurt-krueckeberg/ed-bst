@@ -254,8 +254,10 @@ Some prospective methods found in std::map:
     insert_return_type insert(node_type&& nh);
     
     iterator insert(const_iterator hint, node_type&& nh);
+
     template< class InputIt >
     void insert( InputIt first, InputIt last );
+
 From std::map insert_or_assign methods
     template <class M>
     pair<iterator, bool> insert_or_assign(const key_type& k, M&& obj);
@@ -311,6 +313,8 @@ From std::map insert_or_assign methods
     }
 
     void insert(std::initializer_list<value_type>& list) noexcept; 
+
+    void insert(const value_type&) noexcept; 
 
     constexpr bool insert(const key_type& key, const mapped_type& value) noexcept
     {
@@ -803,6 +807,12 @@ template<class Key, class Value> void bstree<Key, Value>::insert(std::initialize
    for (const auto& [key, value] : list) 
 
       insert_or_assign(key, value);
+}
+
+template<class Key, class Value> inline void bstree<Key, Value>::insert(const typename bstree<Key, Value>::value_type& in) noexcept 
+{
+   auto& [key, value] = in;
+   insert_or_assign(key, value);
 }
 
 /*
