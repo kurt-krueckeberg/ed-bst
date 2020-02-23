@@ -187,7 +187,7 @@ template<class Key, class Value> class bstree {
     template<typename Functor> void DoPostOrderTraverse(Functor f,  const std::unique_ptr<Node>& root) const noexcept;
     template<typename Functor> void DoPreOrderTraverse(Functor f, const std::unique_ptr<Node>& root) const noexcept;
 
-    template<typename Functor> void XXPreOrderTraverse(Functor f,  std::unique_ptr<Node>& root, int &depth) noexcept;
+    template<typename Functor> void depth_PreOrderTraverse(Functor f,  std::unique_ptr<Node>& root, int &depth) noexcept;
 
     void copy_tree(const bstree<Key, Value>& lhs) noexcept;
 
@@ -385,9 +385,9 @@ From std::map insert_or_assign methods
       return DoPreOrderTraverse(f, root); 
     }
 
-    template<typename Functor> void XXPreOrderTraverse(Functor f, int& depth) noexcept  
+    template<typename Functor> void depth_PreOrderTraverse(Functor f, int& depth) noexcept  
     {
-         XXPreOrderTraverse(f, root, depth); 
+         depth_PreOrderTraverse(f, root, depth); 
     } 
 
     template<typename Functor> void postOrderTraverse(Functor f) const noexcept
@@ -636,7 +636,7 @@ template<class Key, class Value> template<typename Functor> void bstree<Key, Val
    DoPreOrderTraverse(f, current->right);
 }
 
-template<class Key, class Value> template<typename Functor> void bstree<Key, Value>::XXPreOrderTraverse(Functor f,  std::unique_ptr<Node>& current, int& depth) noexcept
+template<class Key, class Value> template<typename Functor> void bstree<Key, Value>::depth_PreOrderTraverse(Functor f,  std::unique_ptr<Node>& current, int& depth) noexcept
 {
    ++depth;
 
@@ -649,9 +649,9 @@ template<class Key, class Value> template<typename Functor> void bstree<Key, Val
 
    f(*current); 
 
-   XXPreOrderTraverse(f, current->left, depth);
+   depth_PreOrderTraverse(f, current->left, depth);
 
-   XXPreOrderTraverse(f, current->right, depth);
+   depth_PreOrderTraverse(f, current->right, depth);
 
    --depth;
 }

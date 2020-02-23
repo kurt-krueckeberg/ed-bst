@@ -66,7 +66,7 @@ int main(int argc, char** argv)
                        node.__order = ++order; 
                        }; 
 
-  bal_tree.XXPreOrderTraverse(set_order, depth);
+  bal_tree.depth_PreOrderTraverse(set_order, depth);
 
   bal_tree.levelOrderTraverse(print_functor()); 
   
