@@ -4,6 +4,8 @@
 Binary Search Trees
 ===================
 
+This code prints out the in-order search order before the key, when it does a level-order print of the tree.
+
 Discussion Links
 ----------------
 

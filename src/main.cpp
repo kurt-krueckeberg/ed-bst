@@ -1,6 +1,7 @@
 #include <cstdlib>
 #include <utility>
 #include <iostream>
+#include <iomanip>
 #include <initializer_list>
 #include "test.h"
 #include "bstree.h"
@@ -36,12 +37,37 @@ int main(int argc, char** argv)
 
   balanced_tree.preOrderTraverse(set_order);
 
+/*
   auto print_order = [](const node_type& node, int level) {
       const auto&[key, value] = node.__vt.__get_value();
+      cout << "[level:" << level << ":position:" << node.__pos << ":key:" << key << "]\n" << flush; }; 
+*/
 
-      cout << "[level:" << level << " . position:" << node.__pos << ":  " << key << "], " << flush; }; 
+  class print_functor {
+     
+     int prior_level;
 
-  balanced_tree.levelOrderTraverse(print_order); 
+     public:
+
+      print_functor() : prior_level{0}
+      {
+      }  
+
+      void operator()(const node_type& node, int level) 
+      {
+         if (level !=  prior_level) {
+              
+               cout << "current level = " << level << "\n" << flush;
+               prior_level = level; 
+         }
+
+         const auto&[key, value] = node.__vt.__get_value();
+
+         cout << '[' << setw(3) << node.__pos << ".] " << setw(4) << key << '\n' << flush; 
+      } 
+  };
+
+  balanced_tree.levelOrderTraverse(print_functor()); 
 
   bstree<int, int> tree_copy = balanced_tree;
 
