@@ -641,7 +641,7 @@ template<class Key, class Value> template<typename Functor> void bstree<Key, Val
    ++depth;
 
    if (!current) {
-
+     --depth;
       return;
    }
 
@@ -1165,5 +1165,7 @@ template<class Key, class Value>  void bstree<Key, Value>::Node::recursive_node_
    
    if (right) 
        right->recursive_node_ctor(order, depth);  
+
+   --depth;
 }
 #endif
