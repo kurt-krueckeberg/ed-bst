@@ -101,11 +101,12 @@ template<class Key, class Value> class bstree {
             right->parent = this;
         }  
 
-        void recursive_node_ctor(int& order) noexcept; 
+        void recursive_node_ctor(int& order, int& recursion) noexcept; 
        
         __value_type<Key, Value> __vt;  // Convenience wrapper for std::pair<const Key, Value>
 
-        int __pos;           // This is for education purposes only
+        int __order;           // This is for education purposes only
+        int __rec; // recursion depth 
                               
         std::unique_ptr<Node> left;
         std::unique_ptr<Node> right;
@@ -291,7 +292,8 @@ From std::map insert_or_assign methods
     void mimic_ctor()
     {
       int i  = 1;
-      root->recursive_node_ctor(i);
+      int recursion = 1; 
+      root->recursive_node_ctor(i, recursion);
     }
 
     bstree<Key, Value> clone() const noexcept; 
@@ -626,6 +628,27 @@ template<class Key, class Value> template<typename Functor> void bstree<Key, Val
 
    DoPreOrderTraverse(f, current->right);
 }
+
+template<class Key, class Value> template<typename Functor> void bstree<Key, Value>::XXPreOrderTraverse(Functor f, const std::unique_ptr<Node>& current, int& depth) const noexcept
+{
+   ++depth;
+
+   if (!current) {
+
+      return;
+   }
+
+   current.__rec = depth;
+
+   f(*current); 
+
+   DoPreOrderTraverse(f, current->left);
+
+   DoPreOrderTraverse(f, current->right);
+
+   --depth;
+}
+
 
 template<class Key, class Value> template<typename Functor> void bstree<Key, Value>::DoPostOrderTraverse(Functor f, const std::unique_ptr<Node>& current) const noexcept
 {
@@ -1121,18 +1144,19 @@ template<class Key, class Value> template<typename Functor> void bstree<Key, Val
  * simulates the commented-out recursive Node(const Node&)
  */
 
-template<class Key, class Value>  void bstree<Key, Value>::Node::recursive_node_ctor(int& order) noexcept
+template<class Key, class Value>  void bstree<Key, Value>::Node::recursive_node_ctor(int& order, int& depth) noexcept
 {
-   __pos = order++;
+   __order = order++;
+   __rec   = depth++; // recusion depth
 
    if (!parent) // If lhs is the root, then set parent to nullptr.
        parent = nullptr;
 
    // This will recursively invoke the constructor again, resulting in the entire tree rooted atrc} 
    if (left) 
-       left->recursive_node_ctor(order);  
+       left->recursive_node_ctor(order, depth);  
    
    if (right) 
-       right->recursive_node_ctor(order);  
+       right->recursive_node_ctor(order, depth);  
 }
 #endif

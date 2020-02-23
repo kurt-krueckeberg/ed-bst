@@ -35,7 +35,7 @@ int main(int argc, char** argv)
 
          const auto&[key, value] = node.__vt.__get_value();
 
-         cout << '[' << setw(3) << node.__pos << ".] " << setw(4) << key << '\n' << flush; 
+         cout << '[' << setw(3) << node.__order << ".] " << setw(4) << key << '\n' << flush; 
       } 
   };
   
@@ -59,12 +59,14 @@ int main(int argc, char** argv)
   bal_tree.printlevelOrder(cout, print_key);
 
   int order = 0;
+  int depth = 0;
   
 // Set the order a node is visited when a pre-order traversal is done
   auto set_order = [&](node_type& node) { 
-                       node.__pos = ++order; }; 
+                       node.__order = ++order; 
+                       }; 
 
-  bal_tree.preOrderTraverse(set_order);
+  bal_tree.XXpreOrderTraverse(set_order, root, depth);
 
   bal_tree.levelOrderTraverse(print_functor()); 
   
