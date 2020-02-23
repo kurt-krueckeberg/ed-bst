@@ -3,6 +3,7 @@
 #include <iostream>
 #include <iomanip>
 #include <initializer_list>
+#include <vector>
 #include <algorithm>
 #include "test.h"
 #include "bstree.h"
@@ -11,43 +12,9 @@ using namespace std;
 
 int main(int argc, char** argv) 
 {
-  // These ordered values produce a complete, i.e., balanced and full, bst.
-  std::initializer_list<int> int_list = {100, 50, 200, 20, 70, 150, 250, -10, 40, 60, 90, 125, 175, 225, 275, -40, 10, 30, 45, 55, 65, 80, 95, 110, 130, 165, 190, 220, 230, 260, 290,\
-    -70, -30, -5, 15, 25, 35, 42, 47, 52, 57, 62, 67, 92, 97, 105, 115, 127, 135, 160, 170, 180, 195, 210, 222, 227, 235, 260, 280 };
-
-  std::vector<pair<int, int>> vec_pairs;
-
-  bstree<int, int> bal_tree;
   
-  transform(int_list.begin(), int_list.end(), vec_pairs.begin(), [](const auto& i)-> pair<const int, int> { return {i, i}; });
-
-  for (const auto& pr : vec_pairs) 
-      bal_tree.insert(pr);
-   
-  auto print_key = [](const auto& pr) {
-      const auto&[key, value] = pr;
-      cout << key << ", ";
-  };
-  
-  bal_tree.printlevelOrder(cout, print_key);
-
-  cout << "\n--------------\nPrinting tree_copy, a copy of the above bal_tree.\n"; 
-
-  int order = 0;
-
   using node_type = bstree<int, int>::node_type;
-
-  // Set the order a node is visited when a pre-order traversal is done
-  auto set_order = [&](node_type& node) { node.__pos = ++order; }; 
-
-  bal_tree.preOrderTraverse(set_order);
-
-/*
-  auto print_order = [](const node_type& node, int level) {
-      const auto&[key, value] = node.__vt.__get_value();
-      cout << "[level:" << level << ":position:" << node.__pos << ":key:" << key << "]\n" << flush; }; 
-*/
-
+    
   class print_functor {
      
      int prior_level;
@@ -71,13 +38,40 @@ int main(int argc, char** argv)
          cout << '[' << setw(3) << node.__pos << ".] " << setw(4) << key << '\n' << flush; 
       } 
   };
+  
+  auto print_key = [](const auto& pr) {
+      const auto&[key, value] = pr;
+      cout << key << ", ";
+  };
+  
+  // These ordered values produce a complete, i.e., balanced and full, bst.
+  std::vector<int> int_vec = {100, 50, 200, 20, 70, 150, 250, -10, 40, 60, 90, 125, 175, 225, 275, -40, 10, 30, 45, 55, 65, 80, 95, 110, 130, 165, 190, 220, 230, 260, 290,\
+    -70, -30, -5, 15, 25, 35, 42, 47, 52, 57, 62, 67, 92, 97, 105, 115, 127, 135, 160, 170, 180, 195, 210, 222, 227, 235, 260, 280 };
+
+  bstree<int, int> bal_tree;
+  
+  for (const auto& i : int_vec) bal_tree.insert(i, i);
+  
+  bal_tree.printlevelOrder(cout, print_key);
+
+  cout << "\n--------------\nPrinting tree_copy, a copy of the above bal_tree.\n"; 
+
+  int order = 0;
+  
+// Set the order a node is visited when a pre-order traversal is done
+  auto set_order = [&](node_type& node) { 
+                       node.__pos = ++order; }; 
+
+  bal_tree.preOrderTraverse(set_order);
 
   bal_tree.levelOrderTraverse(print_functor()); 
 
   bstree<int, int> tree_copy = bal_tree;
-
-  tree_copy.printlevelOrder(cout, print_key);
   
+  tree_copy.mimic_ctor(); // set __order ordering to the call order of a recursive Node ctor implementation.
+
+  tree_copy.levelOrderTraverse(print_functor()); 
+
   cout << "floor(37) = " << bal_tree.floor(37) << '\n';
 
   cout << "ceiling(37) = " << bal_tree.ceiling(37) << '\n';
@@ -88,7 +82,7 @@ int main(int argc, char** argv)
 
   bal_tree.printlevelOrder(cout, print_key);
 
-  for (auto& x : int_list) {
+  for (const auto& x : int_vec) {
 
      cout << "--------------------------------\n";
        

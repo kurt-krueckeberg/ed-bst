@@ -101,13 +101,7 @@ template<class Key, class Value> class bstree {
             right->parent = this;
         }  
 
-        void mimic_ctor() noexcept  // mimic the recursive ctor, but set __order instead.
-        {
-            int i = 1;
-            mimic_ctor(i, *root);
-        }
-
-        void mimic_ctor(int& order, const Node&) noexcept; // mimic the recursive ctor, but set __order instead.
+        void recursive_node_ctor(int& order) noexcept; 
        
         __value_type<Key, Value> __vt;  // Convenience wrapper for std::pair<const Key, Value>
 
@@ -293,6 +287,12 @@ From std::map insert_or_assign methods
     bstree& operator=(const bstree&) noexcept; 
 
     bstree& operator=(bstree&&) noexcept;
+
+    void mimic_ctor()
+    {
+      int i  = 1;
+      root->recursive_node_ctor(i);
+    }
 
     bstree<Key, Value> clone() const noexcept; 
 
@@ -1117,26 +1117,22 @@ template<class Key, class Value> template<typename Functor> void bstree<Key, Val
         queue.pop(); 
    }
 }
+/*
+ * simulates the commented-out recursive Node(const Node&)
+ */
 
-template<class Key, class Value>  void bstree<Key, Value>::Node::mimic_ctor(int& order, const typename bstree<Key, Value>::Node& node) noexcept
+template<class Key, class Value>  void bstree<Key, Value>::Node::recursive_node_ctor(int& order) noexcept
 {
-   // TODO: Set __pos
-   node.__pos = order++;
+   __pos = order++;
 
-   if (!node->parent) // If lhs is the root, then set parent to nullptr.
+   if (!parent) // If lhs is the root, then set parent to nullptr.
        parent = nullptr;
 
-   // This will recursively invoke the constructor again, resulting in the entire tree rooted at
-   // lhs being copied.
-
-   if (node.left) { 
-
-       mimic_ctor(*node.left); 
-   } 
+   // This will recursively invoke the constructor again, resulting in the entire tree rooted atrc} 
+   if (left) 
+       left->recursive_node_ctor(order);  
    
-   if (node.right) {
-
-       mimic_ctor(*node.right); 
-    }
+   if (right) 
+       right->recursive_node_ctor(order);  
 }
 #endif
