@@ -140,7 +140,7 @@ template<class Key, class Value> class bstree {
 
       void display_level(std::ostream& ostr, int level) const noexcept
       {
-        ostr << "\n" << "current level = " <<  level << '\n'; 
+        ostr << "\n" << "current level = " <<  level << "\n---------------\n"; 
          
         // Provide some basic spacing to tree appearance.
         /*
@@ -186,6 +186,8 @@ template<class Key, class Value> class bstree {
     template<typename Functor> void DoInOrderTraverse(Functor f, const std::unique_ptr<Node>& root) const noexcept;
     template<typename Functor> void DoPostOrderTraverse(Functor f,  const std::unique_ptr<Node>& root) const noexcept;
     template<typename Functor> void DoPreOrderTraverse(Functor f, const std::unique_ptr<Node>& root) const noexcept;
+
+    template<typename Functor> void XXPreOrderTraverse(Functor f,  std::unique_ptr<Node>& root, int &depth) noexcept;
 
     void copy_tree(const bstree<Key, Value>& lhs) noexcept;
 
@@ -382,6 +384,11 @@ From std::map insert_or_assign methods
     { 
       return DoPreOrderTraverse(f, root); 
     }
+
+    template<typename Functor> void XXPreOrderTraverse(Functor f, int& depth) noexcept  
+    {
+         XXPreOrderTraverse(f, root, depth); 
+    } 
 
     template<typename Functor> void postOrderTraverse(Functor f) const noexcept
     { 
@@ -629,7 +636,7 @@ template<class Key, class Value> template<typename Functor> void bstree<Key, Val
    DoPreOrderTraverse(f, current->right);
 }
 
-template<class Key, class Value> template<typename Functor> void bstree<Key, Value>::XXPreOrderTraverse(Functor f, const std::unique_ptr<Node>& current, int& depth) const noexcept
+template<class Key, class Value> template<typename Functor> void bstree<Key, Value>::XXPreOrderTraverse(Functor f,  std::unique_ptr<Node>& current, int& depth) noexcept
 {
    ++depth;
 
@@ -638,13 +645,13 @@ template<class Key, class Value> template<typename Functor> void bstree<Key, Val
       return;
    }
 
-   current.__rec = depth;
+   current->__rec = depth;
 
    f(*current); 
 
-   DoPreOrderTraverse(f, current->left);
+   XXPreOrderTraverse(f, current->left, depth);
 
-   DoPreOrderTraverse(f, current->right);
+   XXPreOrderTraverse(f, current->right, depth);
 
    --depth;
 }

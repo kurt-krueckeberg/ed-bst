@@ -35,7 +35,7 @@ int main(int argc, char** argv)
 
          const auto&[key, value] = node.__vt.__get_value();
 
-         cout << '[' << setw(3) << node.__order << ".] " << setw(4) << key << '\n' << flush; 
+         cout << "recursion depth = " << setw(2) << node.__rec << ".  order node visited = " << setw(3) << node.__order << ". " << setw(4) << key << '\n' << flush; 
       } 
   };
   
@@ -66,7 +66,7 @@ int main(int argc, char** argv)
                        node.__order = ++order; 
                        }; 
 
-  bal_tree.XXpreOrderTraverse(set_order, root, depth);
+  bal_tree.XXPreOrderTraverse(set_order, depth);
 
   bal_tree.levelOrderTraverse(print_functor()); 
   
