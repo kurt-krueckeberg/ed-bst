@@ -52,9 +52,11 @@ int main(int argc, char** argv)
   
   for (const auto& i : int_vec) bal_tree.insert(i, i);
   
-  bal_tree.printlevelOrder(cout, print_key);
+  cout << "\n--------------\nMaking a copy of the above bal_tree.\n"; 
 
-  cout << "\n--------------\nPrinting tree_copy, a copy of the above bal_tree.\n"; 
+  bstree<int, int> tree_copy = bal_tree;
+
+  bal_tree.printlevelOrder(cout, print_key);
 
   int order = 0;
   
@@ -65,12 +67,14 @@ int main(int argc, char** argv)
   bal_tree.preOrderTraverse(set_order);
 
   bal_tree.levelOrderTraverse(print_functor()); 
-
-  bstree<int, int> tree_copy = bal_tree;
   
   tree_copy.mimic_ctor(); // set __order ordering to the call order of a recursive Node ctor implementation.
+  
+  cout << "\n\nOrder of mimmiced recursive Node copy ctor\n\n";
 
   tree_copy.levelOrderTraverse(print_functor()); 
+
+  return 0;
 
   cout << "floor(37) = " << bal_tree.floor(37) << '\n';
 
