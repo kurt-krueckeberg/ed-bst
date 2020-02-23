@@ -158,7 +158,7 @@ template<class Key, class Value> class bstree {
 
       LevelOrderPrinter (const LevelOrderPrinter& lhs): ostr{lhs.ostr}, current_level{lhs.current_level}, height_{lhs.height_}, do_print{lhs.do_print} {}
       
-      void operator ()(const Node *pnode, int level)
+      void operator ()(const Node& node, int level)
       { 
           // Did current_level change?
           if (current_level != level) { 
@@ -168,7 +168,7 @@ template<class Key, class Value> class bstree {
               display_level(ostr, level);       
           }
 
-          do_print(pnode->__vt.__get_value());
+          do_print(node.__vt.__get_value());
          
           std::cout << '\n' << std::flush;
       }
@@ -1041,14 +1041,13 @@ template<class Key, class Value> bool bstree<Key, Value>::isBalanced() const noe
 
    return true; // All Nodes were balanced.
 }
-
+/*
 // Breadth-first traversal. Useful for display the tree (with a functor that knows how to pad with spaces based on level).
 template<class Key, class Value> template<typename Functor> void bstree<Key, Value>::levelOrderTraverse(Functor f) const noexcept
 {
-   //--std::queue< std::pair<const Node*, int> > queue; 
-   std::queue<Node *, int> > queue; 
+   std::queue< std::pair<const Node*, int> > queue; 
 
-   if (!proot) return;
+   if (!root) return;
       
    auto initial_level = 1; // initial, top root level is 1.
    
@@ -1058,15 +1057,9 @@ template<class Key, class Value> template<typename Functor> void bstree<Key, Val
 
    while (!queue.empty()) {
 
-       /*
-        std::pair<const Node *, int> pair_ = queue.front();
-        const Node *current = pair_.first;
-        int current_level = pair_.second;
-       */
-
         auto[pnode, current_level] = queue.front(); // C++17 unpacking.
 
-        f(pnode.get(), current_level);  
+        f(pnode, current_level);  
         
         if(pnode->left)
             queue.push(std::make_pair(pnode->left.get(), current_level + 1));  
@@ -1077,4 +1070,34 @@ template<class Key, class Value> template<typename Functor> void bstree<Key, Val
         queue.pop(); 
    }
 }
+*/
+
+template<class Key, class Value> template<typename Functor> void bstree<Key, Value>::levelOrderTraverse(Functor f) const noexcept
+{
+   std::queue< std::pair<Node&, int> > queue; 
+
+   if (!root) return;
+      
+   auto initial_level = 1; // initial, top root level is 1.
+   
+   // 1. pair.first  is: bstree<Key, Value>::Node&, the current node to visit.
+   // 2. pair.second is: current level of tree.
+   queue.push(std::pair<Node&, int>(*root, initial_level)); //std::make_pair(*root, initial_level));
+
+   while (!queue.empty()) {
+
+        auto[node, current_level] = queue.front(); // C++17 unpacking.
+
+        f(node, current_level);  
+        
+        if(node.left) 
+            queue.push(std::pair<Node&, int>(*node.left, current_level + 1));  
+        
+        if(node.right) 
+            queue.push(std::pair<Node&, int>(*node.right, current_level + 1));  
+        
+        queue.pop(); 
+   }
+}
+
 #endif

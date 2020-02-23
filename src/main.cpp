@@ -27,20 +27,21 @@ int main(int argc, char** argv)
 
   cout << "\n--------------\nPrinting tree_copy, a copy of the above balanced_tree.\n"; 
 
-  int hidden = 0;
+  int order = 0;
 
   using node_type = bstree<int, int>::node_type;
 
-  auto setter = [&](node_type& node) { node.__pos = ++hidden; }; 
+  // Set the order a node is visited when a pre-order traversal is done
+  auto set_order = [&](node_type& node) { node.__pos = ++order; }; 
 
-  balanced_tree.preOrderTraverse(setter);
+  balanced_tree.preOrderTraverse(set_order);
 
-  auto sp_printer = [](const node_type& node, int level) {
+  auto print_order = [](const node_type& node, int level) {
       const auto&[key, value] = node.__vt.__get_value();
 
       cout << "[level:" << level << " . position:" << node.__pos << ":  " << key << "], " << flush; }; 
 
-  balanced_tree.levelOrderTraverse(sp_printer); 
+  balanced_tree.levelOrderTraverse(print_order); 
 
   bstree<int, int> tree_copy = balanced_tree;
 
