@@ -14,7 +14,7 @@ int main(int argc, char** argv)
 {
   
   using node_type = bstree<int, int>::node_type;
-    
+  
   class print_functor {
      
      int prior_level;
@@ -24,7 +24,7 @@ int main(int argc, char** argv)
       print_functor() : prior_level{0}
       {
       }  
-
+      
       void operator()(const node_type& node, int level) 
       {
          if (level !=  prior_level) {
@@ -43,7 +43,17 @@ int main(int argc, char** argv)
       const auto&[key, value] = pr;
       cout << key << ", ";
   };
+  std::initializer_list<int> lst = {50, 30, 90, 12, 40, 86, 100};
   
+  bstree<int, int> t1;
+  
+  for(const auto& x : lst) 
+         t1.insert(x, x);
+  
+  t1.postOrderTraverse([](const auto& pr) { const auto& [key, value] = pr;
+               cout << key << ", "; }); 
+  
+  return 0;
   // These ordered values produce a complete, i.e., balanced and full, bst.
   std::vector<int> int_vec = {100, 50, 200, 20, 70, 150, 250, -10, 40, 60, 90, 125, 175, 225, 275, -40, 10, 30, 45, 55, 65, 80, 95, 110, 130, 165, 190, 220, 230, 260, 290,\
     -70, -30, -5, 15, 25, 35, 42, 47, 52, 57, 62, 67, 92, 97, 105, 115, 127, 135, 160, 170, 180, 195, 210, 222, 227, 235, 260, 280 };

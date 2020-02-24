@@ -3,8 +3,12 @@
 
   Converted Java code from: 
   https://www.cs.cmu.edu/~adamchik/15-121/lectures/Trees/code/BST.java
+
+  Also a complete discussion of how to implement at stack-based iterator is at:
+  http://courses.cs.vt.edu/~cs3114/Fall17/barnette/notes/Tree-Iterators.pdf
+
  */
-class pre_order_iterator {
+class preorder_iterator {
 
    std::stack<node_type&> stack;
    bstree<Key, Value>& tree;
@@ -20,7 +24,7 @@ class pre_order_iterator {
    
    using iterator_category = std::forward_iterator_tag; 
 	
-   pre_order_iterator(const bstree<Key, Value>& lhs) : tree{lhs}
+   preorder_iterator(const bstree<Key, Value>& lhs) : tree{lhs}
    {
       if (tree.root)
           stack.push(root);
