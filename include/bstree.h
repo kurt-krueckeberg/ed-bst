@@ -43,7 +43,7 @@ template<class Key, class Value> class bstree {
 
         // Due to stack overflow concerns, the default ctor, which would successfully copy the the entire subtree of lhs,
         // is deleted.
-        Node(const Node& lhs) = delete; 
+        Node(const Node& lhs); //-- = delete; 
 
         Node(const __value_type<Key, Value>& vt, Node *in_parent=nullptr) : __vt{vt}, left{nullptr}, right{nullptr}, parent{in_parent}
         {
@@ -425,15 +425,13 @@ From std::map insert_or_assign methods
     }
 };
 
-/*
-
- The Node copy ctor could be implemented recursively as below, but this results in more recursive calls and possible
- stack overflow than using a pre-order tree traversal that copies the input node. Therefore the default copy ctor 
- is deleted.
- 
 template<class Key, class Value>
 bstree<Key, Value>::Node::Node(const Node& lhs) : __vt{lhs.__vt}, left{nullptr}, right{nullptr}
 {
+   print_key_and_order(__vt);  // <<--TODO: 1. Also print __order which we must set in 'lhs' by doing a pre-order traversal beforehand  
+                               // 2. Also print the number of nested calls, which we must somehow set each time the copy ctor is called--from
+                              // the initial root call to the leaves????
+
    if (!lhs.parent) // If lhs is the root, then set parent to nullptr.
        parent = nullptr;
 
@@ -446,12 +444,7 @@ bstree<Key, Value>::Node::Node(const Node& lhs) : __vt{lhs.__vt}, left{nullptr},
    if (lhs.right) 
        connectRight(*lhs.right); 
 }
-*/
 
-/*
- The Node assignment operatorr could be implemented recursively as below, but this results in more recursive calls (and 
- possible stack overflow) than using a pre-order tree traversal that copies the input node. 
- 
 template<class Key, class Value> typename bstree<Key, Value>::Node&  bstree<Key, Value>::Node::operator=(const typename bstree<Key, Value>::Node& lhs) noexcept
 {
    if (&lhs == this) return *this;
@@ -470,12 +463,12 @@ template<class Key, class Value> typename bstree<Key, Value>::Node&  bstree<Key,
   
    return *this;
 }
-*/
 
 /*
  The Node assignment operatorr could be implemented recursively as below, but this results more recursive calls than using
  a pre-order tree traversal that copies the input node. 
  */
+/*
 template<class Key, class Value> typename bstree<Key, Value>::Node&  bstree<Key, Value>::Node::operator=(const typename bstree<Key, Value>::Node& lhs) noexcept
 {
    if (&lhs == this) return *this;
@@ -484,22 +477,9 @@ template<class Key, class Value> typename bstree<Key, Value>::Node&  bstree<Key,
 
    copy_subtree(lhs, root);
 
-/*
-   __vt = lhs.__vt;
-
-   if (lhs.parent == nullptr) // If we are copying a root pointer, then set parent.
-       parent = nullptr;
-
-   // The make_unique<Node> calls below results in the entire tree rooted at lhs being copied.
-   if (lhs.left) 
-       connectLeft(*lhs.left); 
-   
-   if (lhs.right)
-       connectRight(*lhs.right); 
-*/  
    return *this;
 }
-
+*/
 
 template<class Key, class Value> inline bstree<Key, Value>::bstree(std::initializer_list<value_type>& list)  noexcept : bstree()
 {
