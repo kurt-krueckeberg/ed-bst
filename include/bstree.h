@@ -77,6 +77,7 @@ template<class Key, class Value> class bstree {
         
         Node& operator=(Node&&) noexcept;
 
+        // Get rid of these methods that are for move-assigment and move-construction and instead use their code.
         constexpr void connectLeft(std::unique_ptr<Node>& node) noexcept
         {
             left = std::move(node);
@@ -400,13 +401,20 @@ template<class Key, class Value>
 bstree<Key, Value>::Node::Node(const Node& lhs) : __vt{lhs.__vt}, left{nullptr}, right{nullptr}
 {
 static int order = 0;   // This is for analysis purposes.
+static int depth = 0;
+
 // TODO: Must also--somehow--set Node::__recusion_depth. (And also later do so for the default ~Node ).
 
    // Set this->__order. Set the initial value to be 1, when lhs is the root node.
-   if (lhs.parent == nullptr) 
+   if (lhs.parent == nullptr) { 
        order = 1;   
+       depth = 1;
+
+   } else
+       ++depth; 
 
    __order = order++; // Set visited order. We will later compare if this is the same as lhs's pre-order __order setting.
+   __recursion_depth = depth;
 
    if (!lhs.parent) // If lhs is the root, then set parent to nullptr.
        parent = nullptr;
@@ -414,11 +422,17 @@ static int order = 0;   // This is for analysis purposes.
    // This will recursively invoke the constructor again, resulting in the entire tree rooted at
    // lhs being copied.
 
-   if (lhs.left) 
-       connectLeft(*lhs.left); 
+   if (lhs.left) { 
+       left = std::make_unique<Node>(lhs.left);
+       left.parent = *this;
+   }
    
-   if (lhs.right) 
-       connectRight(*lhs.right); 
+   if (lhs.right) {
+       right = std::make_unique<Node>(lhs.right);
+       right.parent = *this;
+   }
+
+   --depth;
 }
 
 template<class Key, class Value> typename bstree<Key, Value>::Node&  bstree<Key, Value>::Node::operator=(const typename bstree<Key, Value>::Node& lhs) noexcept
@@ -431,11 +445,15 @@ template<class Key, class Value> typename bstree<Key, Value>::Node&  bstree<Key,
        parent = nullptr;
 
    // The make_unique<Node> calls below results in the entire tree rooted at lhs being copied.
-   if (lhs.left) 
-       connectLeft(*lhs.left); 
+   if (lhs.left) { 
+       left = std::make_unique<Node>(lhs.left);
+       left.parent = *this;
+   }
    
-   if (lhs.right)
-       connectRight(*lhs.right); 
+   if (lhs.right) {
+       right = std::make_unique<Node>(lhs.right);
+       right.parent = *this;
+   }
   
    return *this;
 }
