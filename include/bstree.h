@@ -400,6 +400,7 @@ template<class Key, class Value>
 bstree<Key, Value>::Node::Node(const Node& lhs) : __vt{lhs.__vt}, left{nullptr}, right{nullptr}
 {
 static int order = 0;   // This is for analysis purposes.
+// TODO: Must also--somehow--set Node::__recusion_depth. (And also later do so for the default ~Node ).
 
    // Set this->__order. Set the initial value to be 1, when lhs is the root node.
    if (lhs.parent == nullptr) 

@@ -52,6 +52,7 @@ int main(int argc, char** argv)
   
   for (const auto& i : int_vec) bal_tree.insert(i, i);
  
+  // TODO: ree_copy's Node's have __recursion_depth of 0? Because I am only setting Node::__recusion_deth for 'bal_tree'.
   auto tree_copy = test_copy_ctor(bal_tree); 
   
   cout << "Printing the tree and its pre-order order = \n";
