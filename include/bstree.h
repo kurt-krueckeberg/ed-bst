@@ -63,7 +63,11 @@ template<class Key, class Value> class bstree {
            traversal ensures that left and right will already be nullptr (and thus no infinite recursion can occur).
          */
 
-       ~Node() = default;
+       //--~Node() = default; // TODO: Does this result in recursion?
+       ~Node()
+        {
+           ++Node::destruct_count; // TODO: This is the number of this called, but is this the same as recusive count?
+        }  
 
         std::ostream& print(std::ostream& ostr) const noexcept; 
 
@@ -119,6 +123,8 @@ template<class Key, class Value> class bstree {
         std::unique_ptr<Node> right;
 
         Node *parent;
+
+        static std::size_t destruct_count;
 
         constexpr const Key& key() const noexcept 
         {
@@ -252,10 +258,18 @@ template<class Key, class Value> class bstree {
 
     // While the default destructor successfully frees all nodes. A huge recursive call invokes every Node's destructor.
     // will be invoke in one huge recursive call 
+    /*--
     ~bstree() noexcept
     {
         destroy_subtree(root);
     } 
+    */
+
+    ~bstree() 
+     {
+        Node::destruct_count = 0; //TODO: Add member variable, dtor_count, and add : ~Node() { ++dtor_count; }
+     }
+    
 
     bstree(std::initializer_list<value_type>& list) noexcept; 
 
@@ -401,10 +415,8 @@ template<class Key, class Value> class bstree {
 template<class Key, class Value>
 bstree<Key, Value>::Node::Node(const Node& lhs) : __vt{lhs.__vt}, left{nullptr}, right{nullptr}
 {
-static int order = 0;   // This is for analysis purposes.
+static int order = 0;   // This is for analysis purposes: order in vist node was visited and recursion depth.
 static int depth = 0;
-
-// TODO: Must also--somehow--set Node::__recusion_depth. (And also later do so for the default ~Node ).
 
    // Set this->__order. Set the initial value to be 1, when lhs is the root node.
    if (lhs.parent == nullptr) { 
