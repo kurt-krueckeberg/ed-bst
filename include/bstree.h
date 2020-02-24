@@ -112,7 +112,7 @@ template<class Key, class Value> class bstree {
         __value_type<Key, Value> __vt;  // Convenience wrapper for std::pair<const Key, Value>
 
         int __order;           // This is for education purposes only
-        int __rec; // recursion depth 
+        int __recursion_depth; // recursion depth 
                               
         std::unique_ptr<Node> left;
         std::unique_ptr<Node> right;
@@ -190,8 +190,12 @@ template<class Key, class Value> class bstree {
     std::size_t size;
 
     template<typename Functor> void DoInOrderTraverse(Functor f, const std::unique_ptr<Node>& root) const noexcept;
+
     template<typename Functor> void DoPostOrderTraverse(Functor f,  const std::unique_ptr<Node>& root) const noexcept;
+
     template<typename Functor> void DoPreOrderTraverse(Functor f, const std::unique_ptr<Node>& root) const noexcept;
+    
+    template<typename Functor> void specialPreOrderTraverse(Functor f, std::unique_ptr<Node>& current, int depth=1) noexcept;
 
     void copy_tree(const bstree<Key, Value>& lhs) noexcept;
 
@@ -357,6 +361,11 @@ template<class Key, class Value> class bstree {
     template<typename Functor> void preOrderTraverse(Functor f) const noexcept  
     { 
       return DoPreOrderTraverse(f, root); 
+    }
+      
+    template<typename Functor> void specialPreOrderTraverse(Functor f) noexcept  
+    { 
+      return specialPreOrderTraverse(f, root, 1); 
     }
 
     template<typename Functor> void postOrderTraverse(Functor f) const noexcept
@@ -589,12 +598,27 @@ template<class Key, class Value> template<typename Functor> void bstree<Key, Val
       return;
    }
 
-   f(*current); 
+   f(*current, depth); 
 
    DoPreOrderTraverse(f, current->left);
 
    DoPreOrderTraverse(f, current->right);
 }
+
+template<class Key, class Value> template<typename Functor> void bstree<Key, Value>::specialPreOrderTraverse(Functor f, std::unique_ptr<Node>& current, int depth) noexcept
+{
+   if (!current) {
+
+      return;
+   }
+
+   f(*current, depth); 
+
+   specialPreOrderTraverse(f, current->left, depth + 1);
+
+   specialPreOrderTraverse(f, current->right, depth + 1);
+}
+
 
 template<class Key, class Value> template<typename Functor> void bstree<Key, Value>::DoPostOrderTraverse(Functor f, const std::unique_ptr<Node>& current) const noexcept
 {
@@ -1093,7 +1117,7 @@ template<class Key, class Value> template<typename Functor> void bstree<Key, Val
 template<class Key, class Value>  void bstree<Key, Value>::Node::recursive_node_ctor(int& order, int depth) noexcept
 {
    __order = order++;
-   __rec   = depth; // recusion depth
+   __recursion_depth   = depth; // recusion depth
 
    if (!parent) // If lhs is the root, then set parent to nullptr.
        parent = nullptr;
