@@ -35,7 +35,7 @@ int main(int argc, char** argv)
 
          const auto&[key, value] = node.__vt.__get_value();
 
-         cout << "recursion depth = " << setw(2) << node.__rec << ".  order node visited = " << setw(3) << node.__order << ". " << setw(4) << key << '\n' << flush; 
+         cout << "recursion depth = " << setw(2) << node.__rec << ".  order = " << setw(3) << node.__order << ". " << setw(4) << key << '\n' << flush; 
       } 
   };
   
@@ -51,29 +51,15 @@ int main(int argc, char** argv)
   bstree<int, int> bal_tree;
   
   for (const auto& i : int_vec) bal_tree.insert(i, i);
+ 
+  auto tree_copy = test_copy_ctor(bal_tree); 
   
-  cout << "\n--------------\nMaking a copy of the above bal_tree.\n"; 
-
-  bstree<int, int> tree_copy = bal_tree;
-
-  bal_tree.printlevelOrder(cout, print_key);
-
-  int order = 0;
-  int depth = 0;
+  cout << "Printing the tree and its pre-order order = \n";
   
-// Set the order a node is visited when a pre-order traversal is done
-  auto set_order = [&](node_type& node) { 
-                       node.__order = ++order; 
-                       }; 
-
-  bal_tree.depth_PreOrderTraverse(set_order);
-
   bal_tree.levelOrderTraverse(print_functor()); 
+   
+  cout << "Printing the tree_copy and the order of recursive copy ctor visitation = \n";
   
-  tree_copy.mimic_ctor(); // set __order ordering to the call order of a recursive Node ctor implementation.
-  
-  cout << "\n\nOrder of mimmiced recursive Node copy ctor\n\n";
-
   tree_copy.levelOrderTraverse(print_functor()); 
 
   return 0;

@@ -1,50 +1,18 @@
-#ifndef test_h_
-#define test_h_
+#include "bstree.h"
 
-#include <iostream>
+template<typename Key, typename Value>
+bstree<Key, Value> test_copy_ctor(const bstree<Key, Value>& lhs)
+{
+  int order = 1;
 
-struct Test {
+  auto set_order = [&](auto& node) { 
+                       node.__order = order++; 
+                       }; 
 
-   int i;
+  // Set the order a node is visited when a pre-order traversal is done
+  lhs.preOrderTraverse(set_order);
 
-   bool operator!=(const Test& lhs) const { return !(operator==(lhs)); }
+  bstree<Key, Value> new_tree{lhs};
 
-   Test() : i{0} {}
-   Test(int in) : i{in} {}
-
-   Test(const Test& ) = default;
-
-   Test(Test&& ) = default;
-
-   Test& operator=(const Test&) = default;
-   
-   Test& operator=(Test&&) = default;
-   
-   bool operator<(const Test& t) const noexcept
-   {
-       return (i < t.i) ? true : false;
-   }
-   
-   bool operator>(const Test& t) const noexcept
-   {
-       return (i > t.i) ? true : false;
-   }
-   
-   bool operator==(const Test& t) const noexcept
-   {
-       return (i == t.i) ? true : false;
-   }
-
-   friend std::ostream& operator<<(std::ostream& ostr, const Test& lhs) 
-   {
-     ostr << lhs.i << std::flush; 
-     return ostr;
-   }
-
-  ~Test()
-   {
-      std::cout << "Test::~Test():i = " << i << ", " << std::endl << std::flush;
-   }
- 
-};
-#endif
+  return new_tree; 
+}

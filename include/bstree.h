@@ -193,8 +193,6 @@ template<class Key, class Value> class bstree {
     template<typename Functor> void DoPostOrderTraverse(Functor f,  const std::unique_ptr<Node>& root) const noexcept;
     template<typename Functor> void DoPreOrderTraverse(Functor f, const std::unique_ptr<Node>& root) const noexcept;
 
-    template<typename Functor> void depth_PreOrderTraverse(Functor f,  std::unique_ptr<Node>& root, int depth) noexcept;
-
     void copy_tree(const bstree<Key, Value>& lhs) noexcept;
 
     constexpr Node *min(std::unique_ptr<Node>& current) const noexcept
@@ -241,36 +239,6 @@ template<class Key, class Value> class bstree {
     const std::unique_ptr<Node>& get_ceiling(const std::unique_ptr<Node>& current, Key key) const noexcept;
 
   public:
-/*
-Some prospective methods found in std::map:
-    template< class InputIt >
-    void insert( InputIt first, InputIt last );
-    
-    void insert( std::initializer_list<value_type> ilist );
-    
-    insert_return_type insert(node_type&& nh);
-    
-    iterator insert(const_iterator hint, node_type&& nh);
-    
-    void insert( std::initializer_list<value_type> ilist );
-    
-    insert_return_type insert(node_type&& nh);
-    
-    iterator insert(const_iterator hint, node_type&& nh);
-
-    template< class InputIt >
-    void insert( InputIt first, InputIt last );
-
-From std::map insert_or_assign methods
-    template <class M>
-    pair<iterator, bool> insert_or_assign(const key_type& k, M&& obj);
-    template <class M>
-    pair<iterator, bool> insert_or_assign(key_type&& k, M&& obj);
-    template <class M>
-    iterator insert_or_assign(const_iterator hint, const key_type& k, M&& obj);
-    template <class M>
-    iterator insert_or_assign(const_iterator hint, key_type&& k, M&& obj);
-*/
 
     // One other stl typedef.
     using node_type       = Node; 
@@ -391,12 +359,6 @@ From std::map insert_or_assign methods
       return DoPreOrderTraverse(f, root); 
     }
 
-    template<typename Functor> void depth_PreOrderTraverse(Functor f) noexcept  
-    {    
-         int depth = 1;
-         depth_PreOrderTraverse(f, root, depth); 
-    } 
-
     template<typename Functor> void postOrderTraverse(Functor f) const noexcept
     { 
       return DoPostOrderTraverse(f, root); 
@@ -428,9 +390,13 @@ From std::map insert_or_assign methods
 template<class Key, class Value>
 bstree<Key, Value>::Node::Node(const Node& lhs) : __vt{lhs.__vt}, left{nullptr}, right{nullptr}
 {
-   print_key_and_order(__vt);  // <<--TODO: 1. Also print __order which we must set in 'lhs' by doing a pre-order traversal beforehand  
-                               // 2. Also print the number of nested calls, which we must somehow set each time the copy ctor is called--from
-                              // the initial root call to the leaves????
+static int order = 0;   // This is for analysis purposes.
+
+   // Set this->__order. Set the initial value to be 1, when lhs is the root node.
+   if (lhs.parent == nullptr) 
+       order = 1;   
+
+   __order = order++; // Set visited order. We will later compare if this is the same as lhs's pre-order __order setting.
 
    if (!lhs.parent) // If lhs is the root, then set parent to nullptr.
        parent = nullptr;
@@ -486,11 +452,18 @@ template<class Key, class Value> inline bstree<Key, Value>::bstree(std::initiali
    insert(list);
 }
 
+/*--
 template<class Key, class Value> inline bstree<Key, Value>::bstree(const bstree<Key, Value>& lhs) noexcept : size{lhs.size}, root{nullptr}
 { 
    if (!lhs.root) return;
     
    copy_subtree(lhs.root, root);
+}
+*/
+
+template<class Key, class Value> inline bstree<Key, Value>::bstree(const bstree<Key, Value>& lhs) noexcept : size{lhs.size}
+{ 
+    root = std::make_unique<Node>(*lhs.root); 
 }
 
 template<class Key, class Value> inline void bstree<Key, Value>::move(bstree<Key, Value>&& lhs) noexcept  
@@ -622,22 +595,6 @@ template<class Key, class Value> template<typename Functor> void bstree<Key, Val
 
    DoPreOrderTraverse(f, current->right);
 }
-
-template<class Key, class Value> template<typename Functor> void bstree<Key, Value>::depth_PreOrderTraverse(Functor f,  std::unique_ptr<Node>& current, int depth) noexcept
-{
-   if (!current) {
-      return;
-   }
-
-   current->__rec = depth;
-
-   f(*current); 
-
-   depth_PreOrderTraverse(f, current->left, depth + 1);
-
-   depth_PreOrderTraverse(f, current->right, depth + 1);
-}
-
 
 template<class Key, class Value> template<typename Functor> void bstree<Key, Value>::DoPostOrderTraverse(Functor f, const std::unique_ptr<Node>& current) const noexcept
 {
