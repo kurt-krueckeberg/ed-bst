@@ -413,6 +413,9 @@ template<class Key, class Value> class bstree {
 };
 
 template<class Key, class Value>
+std::size_t bstree<Key, Value>::Node::destruct_count = 0;
+
+template<class Key, class Value>
 bstree<Key, Value>::Node::Node(const Node& lhs) : __vt{lhs.__vt}, left{nullptr}, right{nullptr}
 {
 static int order = 0;   // This is for analysis purposes: order in vist node was visited and recursion depth.
