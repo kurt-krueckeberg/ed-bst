@@ -264,6 +264,7 @@ template<class Key, class Value> class bstree {
     bstree(bstree&& lhs) noexcept
     {
         move(std::move(lhs)); 
+        lhs.size = 0;
     }
 
     bstree& operator=(const bstree&) noexcept; 
@@ -422,15 +423,11 @@ static int depth = 0;
    // This will recursively invoke the constructor again, resulting in the entire tree rooted at
    // lhs being copied.
 
-   if (lhs.left) { 
-       left = std::make_unique<Node>(*lhs.left);
-       left->parent = this;
-   }
+   if (lhs.left) 
+       connectLeft(*lhs.left);
    
-   if (lhs.right) {
-       right = std::make_unique<Node>(*lhs.right);
-       right->parent = this;
-   }
+   if (lhs.right)
+       connectRight(*lhs.right);
 
    --depth;
 }
@@ -445,15 +442,12 @@ template<class Key, class Value> typename bstree<Key, Value>::Node&  bstree<Key,
        parent = nullptr;
 
    // The make_unique<Node> calls below results in the entire tree rooted at lhs being copied.
-   if (lhs.left) { 
-       left = std::make_unique<Node>(*lhs.left);
-       left->parent = this;
-   }
+
+   if (lhs.left) 
+       connectLeft(*lhs.left);
    
-   if (lhs.right) {
-       right = std::make_unique<Node>(*lhs.right);
-       right->parent = this;
-   }
+   if (lhs.right)
+       connectRight(*lhs.right);
   
    return *this;
 }
@@ -511,6 +505,8 @@ template<class Key, class Value> bstree<Key, Value>& bstree<Key, Value>::operato
   root = std::make_unique<Node>(*lhs.root); 
  
   size = lhs.size; 
+
+  lhs.size = 0;
 
   return *this;
 }
