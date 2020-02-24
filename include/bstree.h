@@ -423,13 +423,13 @@ static int depth = 0;
    // lhs being copied.
 
    if (lhs.left) { 
-       left = std::make_unique<Node>(lhs.left);
-       left.parent = *this;
+       left = std::make_unique<Node>(*lhs.left);
+       left->parent = this;
    }
    
    if (lhs.right) {
-       right = std::make_unique<Node>(lhs.right);
-       right.parent = *this;
+       right = std::make_unique<Node>(*lhs.right);
+       right->parent = this;
    }
 
    --depth;
@@ -446,13 +446,13 @@ template<class Key, class Value> typename bstree<Key, Value>::Node&  bstree<Key,
 
    // The make_unique<Node> calls below results in the entire tree rooted at lhs being copied.
    if (lhs.left) { 
-       left = std::make_unique<Node>(lhs.left);
-       left.parent = *this;
+       left = std::make_unique<Node>(*lhs.left);
+       left->parent = this;
    }
    
    if (lhs.right) {
-       right = std::make_unique<Node>(lhs.right);
-       right.parent = *this;
+       right = std::make_unique<Node>(*lhs.right);
+       right->parent = this;
    }
   
    return *this;
