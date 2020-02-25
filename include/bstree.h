@@ -126,20 +126,31 @@ template<class Key, class Value> class bstree {
 
         static std::size_t destruct_count;
 
+        constexpr const value_type&  __get_value() const noexcept
+        {
+	    return __vt.__get_value();
+        }
+
+        constexpr value_type&  __get_value() noexcept
+        {
+	    return __vt.__get_value();
+        }
+
         constexpr const Key& key() const noexcept 
         {
-           return __vt.__get_value().first; 
+           return __get_value().first; 
         } 
 
         constexpr const Value& value() const noexcept 
         { 
-           return __vt.__get_value().second; 
+           return __get_value().second; 
         }  
         
         constexpr Value& value() noexcept 
         { 
-           return __vt.__get_value().second; 
+           return __get_value().second; 
         }
+
     }; 
 
    template<typename Printer> class LevelOrderPrinter {

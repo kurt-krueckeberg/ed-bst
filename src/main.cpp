@@ -50,8 +50,8 @@ int main(int argc, char** argv)
   for(const auto& x : lst) 
          t1.insert(x, x);
   
-  t1.postOrderTraverse([](const auto& pr) { const auto& [key, value] = pr;
-               cout << key << ", "; }); 
+  t1.postOrderTraverse([](const auto& node) { 
+               cout << node.key() << ", "; }); 
   
   return 0;
   // These ordered values produce a complete, i.e., balanced and full, bst.
