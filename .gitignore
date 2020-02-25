@@ -18,4 +18,5 @@ xxx.txt
 *.sh
 *.cmd
 x
+.*.swp
 .dep.in
