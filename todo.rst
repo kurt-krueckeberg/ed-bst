@@ -3,8 +3,9 @@ TODO
 
 Implement:
 
-1. pre-order, postorder and in-order class iterators
-2. Implement versions that use stacks
+1. Get inorder_stack_iterator working
+2. Create postorder and in-order class iterators
+3. Implement versions that use stacks
 
 Finish code to accurate set the recursion depth for ~bstree() and ~Node(), or use the debugger to follow the ~Node() calls to see how deep the recursion goes.
 
