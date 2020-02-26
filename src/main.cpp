@@ -39,16 +39,20 @@ int main(int argc, char** argv)
       } 
   };
   
-  auto print_key = [](const auto& pr) {
+   
+  auto key_printer = [](const auto& pr) {
       const auto&[key, value] = pr;
       cout << key << ", ";
   };
+
   std::initializer_list<int> lst = {50, 30, 90, 12, 40, 86, 100};
   
   bstree<int, int> t1;
   
   for(const auto& x : lst) 
          t1.insert(x, x);
+  
+  t1.inOrderIterative(key_printer);
   
   t1.postOrderTraverse([](const auto& node) { 
                cout << node.key() << ", "; }); 
@@ -83,7 +87,7 @@ int main(int argc, char** argv)
 
   cout << "ceilling(41) = " << bal_tree.ceiling(41) << '\n';
 
-  bal_tree.printlevelOrder(cout, print_key);
+  //++bal_tree.printlevelOrder(cout, print_key); <--- This code passes Node& and not the expect pair<const Key, Value>&
 
   for (const auto& x : int_vec) {
 
@@ -92,7 +96,7 @@ int main(int argc, char** argv)
      cout << "bal_tree.remove(" << x << ")\n";
      
      bal_tree.remove(x);
-     bal_tree.printlevelOrder(cout, print_key);
+     //++bal_tree.printlevelOrder(cout, print_key);<--- This code passes Node& and not the expect pair<const Key, Value>&
   } 
 
   return 0;
